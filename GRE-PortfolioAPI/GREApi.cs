@@ -7,29 +7,42 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace GRE_PortfolioAPI
 {
-    public static class GREApi
+    public class GREApi
     {
         [FunctionName("GetPortfolios")]
-        public static async Task<IActionResult> GetPortfolios(
+        public IActionResult GetPortfolios(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-
-            string name = req.Query["name"];
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
-
-            string responseMessage = string.IsNullOrEmpty(name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
-
-            return new OkObjectResult(responseMessage);
+            
+            return new OkObjectResult(new List<Portfolio>() { new Portfolio() { Id = 1, Name = "Swiss Assets"}, new Portfolio() { Id = 2, Name = "US Assets" } });
         }
+
+        [FunctionName("GetPortfolioBalance")]
+        public IActionResult GetPortfolioBalance(
+            [HttpTrigger(AuthorizationLevel.Function, "get" , Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            return new OkObjectResult(new PortfolioBalance() { Id = 1, Balance = 10000 });
+        }
+    }
+
+    public class Portfolio
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class PortfolioBalance
+    {
+        public int Id { get; set; }
+        public decimal  Balance { get; set; }
     }
 }
