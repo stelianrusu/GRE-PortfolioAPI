@@ -32,6 +32,16 @@ namespace GRE_PortfolioAPI
 
             return new OkObjectResult(new PortfolioBalance() { Id = 1, Balance = 10000 });
         }
+
+        [FunctionName("GetAdminInfo")]
+        public IActionResult GetAdminInfo(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            return new OkObjectResult(new AdminInfo());
+        }
     }
 
     public class Portfolio
@@ -44,5 +54,10 @@ namespace GRE_PortfolioAPI
     {
         public int Id { get; set; }
         public decimal  Balance { get; set; }
+    }
+
+    public class AdminInfo
+    {
+        public string Message { get; set; } = "Your permission has been granted by Admin";
     }
 }
